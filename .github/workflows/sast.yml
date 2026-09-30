@@ -8,6 +8,6 @@ jobs:
     container:
       image: semgrep/semgrep
   steps:
-    - uses: actions/checkout@v4
-    - name: Run Semgrep
+    uses: actions/checkout@v4
+    name: Run Semgrep
     run: semgrep --config auto --error .
