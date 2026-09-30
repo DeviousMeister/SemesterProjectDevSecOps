@@ -1,1 +1,3 @@
-test
+Add a short section to your repo's README describing: what triggers your pipeline, what each job does, and what permissions/access it has. A few sentences and maybe a simple diagram is enough - this becomes the foundation for your Midterm Checkpoint architecture diagram in Week 8.
+
+Through GitHub actions we have our CI pipeline run automaticallyw ith every push to the main branch as well as any pull requests targeting main. "build-test" runs on ubuntu latest to check the repo, sets up the environment, installs dependencies, runs the test suite, and verifies the build. As far as permissions goes, it reads, then restricts the workflow to read only access on repo contents.
