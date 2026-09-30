@@ -1,0 +1,13 @@
+rules:
+  - id: sql-query-built-from-string
+    languages: [python]
+    severity: ERROR
+    message: >
+      SQL query is built with string concatenation or formatting. User input
+      could change the meaning of the query (SQL injection). Use parameterized
+      queries instead, e.g. cursor.execute("SELECT * FROM t WHERE id = %s", (user_id,)).
+    pattern-either:
+      - pattern: $CURSOR.execute($A + $B)
+      - pattern: $CURSOR.execute(f"...{$X}...")
+      - pattern: $CURSOR.execute("..." % $X)
+      - pattern: $CURSOR.execute("...".format(...))
