@@ -1,0 +1,5 @@
+Triage Log
+Finding	File:Line	Verdict	Action Taken
+Mutable action tag: actions/checkout@v4	.github/workflows/ci.yml:19 |	True Positive	| Pinned to full 40-character commit SHA, kept # v4 as a comment
+Mutable action tag: actions/setup-python@v5	.github/workflows/ci.yml:22	| True Positive	| Pinned to full 40-character commit SHA, kept # v5 as a comment
+Mutable action tag: actions/checkout@v4	.github/workflows/sast.yml:11 |	True Positive |	Pinned to full 40-character commit SHA, kept # v4 as a comment
