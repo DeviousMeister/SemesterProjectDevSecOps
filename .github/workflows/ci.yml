@@ -32,7 +32,7 @@ jobs:
       - name: Run tests
         run: pytest
 
-#   deploy:
+#   deploy: AWS OIDC
 #     runs-on: ubuntu-latest
 #     steps:
 #       - uses: actions/checkout@v4
