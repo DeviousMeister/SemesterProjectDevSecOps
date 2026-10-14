@@ -13,20 +13,23 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
+      - name: Set lowercase image name
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build and push image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}:${{ github.sha }} .
-          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker build -t "$IMAGE:${{ github.sha }}" .
+          docker push "$IMAGE:${{ github.sha }}"
 
       - name: Resolve immutable image digest
         shell: bash
         run: |
           set -euo pipefail
-          DIGEST="$(docker buildx imagetools inspect ghcr.io/${{ github.repository }}:${{ github.sha }} | awk '/^Digest:/ {print $2; exit}')"
-          echo "IMAGE_REF=ghcr.io/${{ github.repository }}@${DIGEST}" >> "$GITHUB_ENV"
+          DIGEST="$(docker buildx imagetools inspect "$IMAGE:${{ github.sha }}" | awk '/^Digest:/ {print $2; exit}')"
+          echo "IMAGE_REF=${IMAGE}@${DIGEST}" >> "$GITHUB_ENV"
 
       - name: Scan image with Trivy
         run: |
@@ -44,5 +47,5 @@ jobs:
       - name: Verify image signature
         run: |
           cosign verify "$IMAGE_REF" \
-            --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/sca.yml@refs/heads/main" \
+            --certificate-identity-regexp "^https://github.com/${{ github.repository }}/.github/workflows/sca.yml@.+$" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
