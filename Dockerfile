@@ -11,4 +11,5 @@ COPY --from=build /app .
 ENV PYTHONPATH=/app/deps
 USER nonroot
 EXPOSE 3000
+ENV HOST=0.0.0.0
 CMD ["app.py"]
