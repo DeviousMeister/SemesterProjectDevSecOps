@@ -33,3 +33,9 @@ jobs:
 
       - name: Sign the image
         run: cosign sign --yes ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+      - name: Verify image signature
+        run: |
+          cosign verify ghcr.io/${{ github.repository }}:${{ github.sha }} \
+            --certificate-identity-regexp "https://github.com/${{ github.repository }}/.*" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
