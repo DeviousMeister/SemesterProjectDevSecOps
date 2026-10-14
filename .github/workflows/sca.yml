@@ -11,7 +11,7 @@ jobs:
   build-scan-sign:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
@@ -21,21 +21,28 @@ jobs:
           docker build -t ghcr.io/${{ github.repository }}:${{ github.sha }} .
           docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
 
+      - name: Resolve immutable image digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIGEST="$(docker buildx imagetools inspect ghcr.io/${{ github.repository }}:${{ github.sha }} | awk '/^Digest:/ {print $2; exit}')"
+          echo "IMAGE_REF=ghcr.io/${{ github.repository }}@${DIGEST}" >> "$GITHUB_ENV"
+
       - name: Scan image with Trivy
         run: |
           curl -sfL -o install-trivy.sh https://raw.githubusercontent.com/aquasecurity/trivy/v0.75.0/contrib/install.sh
           echo "e00df553be558995b994758bc8995956554a16937f456dc6615b0cc411bfec7a  install-trivy.sh" | sha256sum -c -
           sh install-trivy.sh -b "$HOME/.local/bin" v0.75.0
-          "$HOME/.local/bin/trivy" image ghcr.io/${{ github.repository }}:${{ github.sha }}
+          "$HOME/.local/bin/trivy" image "$IMAGE_REF"
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac 
+        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac
 
-      - name: Sign the image
-        run: cosign sign --yes ghcr.io/${{ github.repository }}:${{ github.sha }}
+      - name: Sign the image by digest
+        run: cosign sign --yes "$IMAGE_REF"
 
       - name: Verify image signature
         run: |
-          cosign verify ghcr.io/${{ github.repository }}:${{ github.sha }} \
-            --certificate-identity-regexp "https://github.com/${{ github.repository }}/.*" \
+          cosign verify "$IMAGE_REF" \
+            --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/sca.yml@refs/heads/main" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
