@@ -92,6 +92,34 @@
             ]
           },
           {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": -1,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Developer",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "Developer"
+            ],
+            "id": "b1259199-ff2f-4581-bc4b-6f8974beb503",
+            "source": {
+              "x": -180,
+              "y": 60
+            },
+            "target": {
+              "x": -180,
+              "y": 440
+            }
+          },
+          {
             "position": {
               "x": 200,
               "y": 380
@@ -112,6 +140,7 @@
             },
             "visible": true,
             "shape": "process",
+            "zIndex": 1,
             "ports": {
               "groups": {
                 "top": {
@@ -195,7 +224,6 @@
               ]
             },
             "id": "683e6684-68d8-499b-8447-6c240d70e890",
-            "zIndex": 1,
             "data": {
               "type": "tm.Process",
               "name": "Flask App\n",
@@ -232,6 +260,7 @@
             },
             "visible": true,
             "shape": "actor",
+            "zIndex": 2,
             "ports": {
               "groups": {
                 "top": {
@@ -315,7 +344,6 @@
               ]
             },
             "id": "df8d9fe2-e3c2-496a-a1a5-b251ff5b9319",
-            "zIndex": 2,
             "data": {
               "type": "tm.Actor",
               "name": "User",
@@ -528,6 +556,7 @@
             },
             "visible": true,
             "shape": "store",
+            "zIndex": 11,
             "ports": {
               "groups": {
                 "top": {
@@ -611,7 +640,6 @@
               ]
             },
             "id": "7e0796f6-fedc-42dc-bdd2-2b05ec6dad2f",
-            "zIndex": 11,
             "data": {
               "type": "tm.Store",
               "name": "ghcr.io",
@@ -649,6 +677,7 @@
             },
             "visible": true,
             "shape": "process",
+            "zIndex": 12,
             "ports": {
               "groups": {
                 "top": {
@@ -732,7 +761,6 @@
               ]
             },
             "id": "9afe944d-d855-46cb-ab46-c4be3840ee27",
-            "zIndex": 12,
             "data": {
               "type": "tm.Process",
               "name": "CI Jobs",
@@ -747,6 +775,341 @@
               "privilegeLevel": "",
               "threats": []
             }
+          },
+          {
+            "position": {
+              "x": -100,
+              "y": 133
+            },
+            "size": {
+              "width": 120,
+              "height": 60
+            },
+            "attrs": {
+              "text": {
+                "text": "Source repo"
+              },
+              "topLine": {
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              },
+              "bottomLine": {
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "ports": {
+              "groups": {
+                "top": {
+                  "position": "top",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                },
+                "right": {
+                  "position": "right",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                },
+                "bottom": {
+                  "position": "bottom",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                },
+                "left": {
+                  "position": "left",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                }
+              },
+              "items": [
+                {
+                  "group": "top",
+                  "id": "ad5f6960-231c-4282-bd1d-6c02136799f0"
+                },
+                {
+                  "group": "right",
+                  "id": "9b7495a7-593c-43b5-922f-c2bf462e7079"
+                },
+                {
+                  "group": "bottom",
+                  "id": "48fcd828-22c7-4d73-96d0-2829b5b53bbb"
+                },
+                {
+                  "group": "left",
+                  "id": "822a6275-5430-4177-86ec-6c1e0aefea4c"
+                }
+              ]
+            },
+            "id": "58ae32ce-6d52-46c5-9d8b-fa024973a183",
+            "zIndex": 14,
+            "data": {
+              "type": "tm.Store",
+              "name": "Source repo",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isALog": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesCredentials": false,
+              "storesInventory": false,
+              "threats": []
+            }
+          },
+          {
+            "position": {
+              "x": -357,
+              "y": 133
+            },
+            "size": {
+              "width": 112.5,
+              "height": 60
+            },
+            "attrs": {
+              "text": {
+                "text": "Dev"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "actor",
+            "ports": {
+              "groups": {
+                "top": {
+                  "position": "top",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                },
+                "right": {
+                  "position": "right",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                },
+                "bottom": {
+                  "position": "bottom",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                },
+                "left": {
+                  "position": "left",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                }
+              },
+              "items": [
+                {
+                  "group": "top",
+                  "id": "ecd7498e-bfa0-4c61-83cf-6116c4b01dca"
+                },
+                {
+                  "group": "right",
+                  "id": "477b0ceb-48e1-42bf-bb43-81245c4d6fdb"
+                },
+                {
+                  "group": "bottom",
+                  "id": "fa1a75a1-946d-4e25-b3bb-9cfd998ea948"
+                },
+                {
+                  "group": "left",
+                  "id": "0ad37cdf-a7b8-479f-9efc-1ce192bbdb85"
+                }
+              ]
+            },
+            "id": "282f35b3-b0d5-4fcb-8382-0c95c38d10f7",
+            "zIndex": 15,
+            "data": {
+              "type": "tm.Actor",
+              "name": "Dev",
+              "description": "",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "providesAuthentication": false,
+              "threats": []
+            }
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 16,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "git push",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "trustBoundaryIds": []
+            },
+            "labels": [
+              "git push"
+            ],
+            "id": "bdf921f4-8e9c-4bc3-8a97-03fdf97eab62",
+            "source": {
+              "cell": "282f35b3-b0d5-4fcb-8382-0c95c38d10f7",
+              "port": "477b0ceb-48e1-42bf-bb43-81245c4d6fdb"
+            },
+            "target": {
+              "cell": "58ae32ce-6d52-46c5-9d8b-fa024973a183",
+              "port": "822a6275-5430-4177-86ec-6c1e0aefea4c"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 17,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "code",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "trustBoundaryIds": []
+            },
+            "labels": [
+              "code"
+            ],
+            "id": "e9309005-b477-4011-b398-02109e15d6ff",
+            "source": {
+              "cell": "58ae32ce-6d52-46c5-9d8b-fa024973a183",
+              "port": "48fcd828-22c7-4d73-96d0-2829b5b53bbb"
+            },
+            "target": {
+              "cell": "58ae32ce-6d52-46c5-9d8b-fa024973a183",
+              "port": "48fcd828-22c7-4d73-96d0-2829b5b53bbb"
+            },
+            "vertices": []
           },
           {
             "shape": "flow",
@@ -765,7 +1128,7 @@
             },
             "width": 200,
             "height": 100,
-            "zIndex": 13,
+            "zIndex": 18,
             "connector": "smooth",
             "data": {
               "type": "tm.Flow",
@@ -801,29 +1164,101 @@
             ],
             "id": "2f30d420-34da-4525-a3d1-024c10ce9b6f",
             "source": {
-              "x": -140,
-              "y": 290
-            },
-            "target": {
               "cell": "7e0796f6-fedc-42dc-bdd2-2b05ec6dad2f",
               "port": "e29ec623-86b4-4f23-b29b-15e2db4de9ff"
             },
-            "vertices": [
-              {
-                "x": -140,
-                "y": 360
-              },
-              {
-                "x": -240,
-                "y": 470
-              },
-              {
-                "x": -200,
-                "y": 470
-              }
-            ],
+            "target": {
+              "cell": "9afe944d-d855-46cb-ab46-c4be3840ee27",
+              "port": "e345c206-be49-48c6-a031-69f2f36f0579"
+            },
+            "vertices": [],
             "tools": {
               "items": [
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
                 "boundary",
                 "button-remove",
                 "vertices",
