@@ -1,37 +1,57 @@
 name: IaC Policy Check
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - 'Lab07/**'
+      - '.github/workflows/iac.yml'
+  pull_request:
+    paths:
+      - 'Lab07/**'
+      - '.github/workflows/iac.yml'
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   iac-policy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Lab07
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::105456917762:role/github-actions-deploy
+          aws-region: us-east-1
 
       - name: Terraform init
-        run: terraform init
+        run: terraform init -input=false
 
       - name: Run Checkov
-        uses: bridgecrewio/checkov-action@master
+        uses: bridgecrewio/checkov-action@v12
         with:
           directory: Lab07
           framework: terraform
 
       - name: Terraform plan
-        run: terraform plan -out=tfplan.binary
+        run: terraform plan -input=false -out=tfplan.binary
 
       - name: Convert plan to JSON
         run: terraform show -json tfplan.binary > tfplan.json
 
       - name: Set up OPA
         run: |
-          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          curl -L -o opa https://openpolicyagent.org/downloads/v1.0.0/opa_linux_amd64_static
           chmod +x opa
           sudo mv opa /usr/local/bin/
 
@@ -42,4 +62,4 @@ jobs:
             echo "Policy violation found:"
             echo "$result"
             exit 1
-          fi 
+          fi
