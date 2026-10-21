@@ -41,4 +41,4 @@ jobs:
             echo "Policy violation found:"
             echo "$result"
             exit 1
-          fi
+          fi 
