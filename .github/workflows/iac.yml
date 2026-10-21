@@ -20,7 +20,8 @@ jobs:
       - name: Run Checkov
         uses: bridgecrewio/checkov-action@master
         with:
-          directory: .
+          directory: Lab07
+          framework: terraform
 
       - name: Terraform plan
         run: terraform plan -out=tfplan.binary
