@@ -17,6 +17,8 @@ spec:
         message: "CPU and memory limits are required."
         pattern:
           spec:
+            securityContext:
+              runAsNonRoot: true
             containers:
               - resources:
                   limits:
