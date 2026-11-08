@@ -2,6 +2,7 @@ name: IaC Policy Check
 
 on:
   push:
+    branches: [main, Lab07]
     paths:
       - 'Lab07/**'
       - '.github/workflows/iac.yml'
