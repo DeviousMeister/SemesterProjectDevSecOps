@@ -20,15 +20,17 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build and push image
+        shell: bash
         run: |
           docker build -t "$IMAGE:${{ github.sha }}" .
-          docker push "$IMAGE:${{ github.sha }}"
+          docker push "$IMAGE:${{ github.sha }}" | tee push.log
 
       - name: Resolve immutable image digest
         shell: bash
         run: |
           set -euo pipefail
-          DIGEST="$(docker buildx imagetools inspect "$IMAGE:${{ github.sha }}" | awk '/^Digest:/ {print $2; exit}')"
+          DIGEST="$(awk '/digest: sha256:/ {print $3}' push.log | tail -1)"
+          [[ "$DIGEST" == sha256:* ]] || { echo "Could not read digest from push output"; exit 1; }
           echo "IMAGE_REF=${IMAGE}@${DIGEST}" >> "$GITHUB_ENV"
 
       - name: Scan image with Trivy
