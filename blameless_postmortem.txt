@@ -1,0 +1,27 @@
+Part 5: Write the Blameless Postmortem
+
+Treat your simulation as the incident. Write 300 to 400 words, using real details from your own alert evidence. A good structure:
+
+Summary (two or three sentences): what the scenario was and what Falco detected.
+Timeline (three to five lines, in UTC): use the timestamps from your actual alerts.
+What detection caught and what it missed: for example, which commands alerted, which did not, and whether anyone would actually have been notified.
+Contributing factors in the system: what conditions made this possible?
+What went well.
+Action items: at least one that is specific, has an owner role, and has a date.
+
+A production container should be immutable, so a package manager running inside one is unusual and worth an alert.
+Terminal shell in container, at Notice priority. This fires because a shell with a terminal attached started inside a container.
+Read sensitive file untrusted, at Warning priority. This fires because cat opened /etc/shadow.
+
+The scenario that occurred was one where we had a package manager running inside of a production container. Falco then detected fired because a shell with a terminal attached started inside a container as well as reading sensitive files that were untrusted due to cat /etc/shadow.
+Timeline: 
+00:46:59.636141072: Notice ran as a shell was spawned in a container with an attached terminal.
+00:47:05.562360992: Warning Package manager run in container 
+00:58:00.764474332: Warning Package manager run in container 
+01:07:57.682882436: Warning Sensitive file opened for reading by non-trusted program 
+Falco was thus clearly able to catch the Package manager and gave a WARNING that the shell that was inside of a container. 
+Due to not having a protocol that stopped shells running in a container with a terminal the code was able to run. For the more serious WARNING, not having Restricted Pod Security Standard on the namespace for the WARNING we produced caused the code to be able to include the sensitive file.
+As far as what went well, due to our Falco detection we were able to at least know of the potential frailties in the system and distribute that information to our corresponding teams to implement a hot-fix. Additionally, implementing the Falco rule was relatively painless and was a quick addition so the time to implementation was satisfactory which bodes well for adding other Falco rules in order to increase our general knowledge of how secure our code is.
+This all being the case we will be doing this from now on:
+We will be having a dedicated team monitoring for WARNING and NOTICES to implement fixes before sending code to production. - Engineering team will be needing to distribute this task to a new group of SMEs - Due before our next All-Hands meeting.
+

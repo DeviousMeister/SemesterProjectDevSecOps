@@ -1,0 +1,17 @@
+driver:
+  kind: modern_ebpf
+tty: true
+customRules:
+  lab11-rules.yaml: |-
+    - rule: Lab11 Package Manager Run in Container
+      desc: A package manager was launched inside a running container
+      condition: >
+        evt.type in (execve, execveat) and evt.dir=< and
+        container.id != host and
+        proc.name in (apk, apt, apt-get, yum, dnf, pip, pip3, npm)
+      output: >
+        Package manager run in container (user=%user.name
+        command=%proc.cmdline container=%container.name
+        image=%container.image.repository)
+      priority: WARNING
+      tags: [lab11, container, mitre_execution]
