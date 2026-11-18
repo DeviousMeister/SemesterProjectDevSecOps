@@ -1,53 +1,103 @@
-name: Build, Scan, and Sign
+name: Build, Attest, Verify
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
-  packages: write
-  id-token: write
 
 jobs:
-  build-scan-sign:
+  build-sign-attest:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    outputs:
+      image-repo: ${{ steps.image.outputs.image-repo }}
+      digest: ${{ steps.image.outputs.digest }}
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-
-      - name: Set lowercase image name
-        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
       - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
       - name: Build and push image
-        shell: bash
         run: |
-          docker build -t "$IMAGE:${{ github.sha }}" .
-          docker push "$IMAGE:${{ github.sha }}" | tee push.log
+          IMAGE_REPO="ghcr.io/${GITHUB_REPOSITORY,,}"
+          docker build -t "${IMAGE_REPO}:${GITHUB_SHA}" .
+          docker push "${IMAGE_REPO}:${GITHUB_SHA}" | tee push.log
 
-      - name: Resolve immutable image digest
-        shell: bash
+      - name: Resolve the image digest
+        id: image
         run: |
           set -euo pipefail
+          IMAGE_REPO="ghcr.io/${GITHUB_REPOSITORY,,}"
           DIGEST="$(awk '/digest: sha256:/ {print $3}' push.log | tail -1)"
-          [[ "$DIGEST" == sha256:* ]] || { echo "Could not read digest from push output"; exit 1; }
-          echo "IMAGE_REF=${IMAGE}@${DIGEST}" >> "$GITHUB_ENV"
+          if [[ "$DIGEST" != sha256:* ]]; then
+            echo "Could not read digest from push output"
+            exit 1
+          fi
+          echo "Image: ${IMAGE_REPO}@${DIGEST}"
+          echo "image-repo=${IMAGE_REPO}" >> "$GITHUB_OUTPUT"
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
 
       - name: Scan image with Trivy
         run: |
           curl -sfL -o install-trivy.sh https://raw.githubusercontent.com/aquasecurity/trivy/v0.75.0/contrib/install.sh
           echo "e00df553be558995b994758bc8995956554a16937f456dc6615b0cc411bfec7a  install-trivy.sh" | sha256sum -c -
           sh install-trivy.sh -b "$HOME/.local/bin" v0.75.0
-          "$HOME/.local/bin/trivy" image "$IMAGE_REF"
+          "$HOME/.local/bin/trivy" image "${{ steps.image.outputs.image-repo }}@${{ steps.image.outputs.digest }}"
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac
 
       - name: Sign the image by digest
-        run: cosign sign --yes "$IMAGE_REF"
+        run: cosign sign --yes "${{ steps.image.outputs.image-repo }}@${{ steps.image.outputs.digest }}"
 
-      - name: Verify image signature
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8
+        with:
+          subject-name: ${{ steps.image.outputs.image-repo }}
+          subject-digest: ${{ steps.image.outputs.digest }}
+          push-to-registry: true
+
+  verify:
+    needs: build-sign-attest
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      attestations: read
+    env:
+      IMAGE_REF: ${{ needs.build-sign-attest.outputs.image-repo }}@${{ needs.build-sign-attest.outputs.digest }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Verify build provenance
         run: |
-          cosign verify "$IMAGE_REF" \
-            --certificate-identity-regexp "^https://github.com/${{ github.repository }}/.github/workflows/sca.yml@.+$" \
+          gh attestation verify "oci://${IMAGE_REF}" \
+            --repo "${{ github.repository }}" \
+            --signer-workflow "${{ github.repository }}/.github/workflows/sca.yml"
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac
+
+      - name: Verify Cosign signature
+        run: |
+          cosign verify "${IMAGE_REF}" \
+            --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/sca.yml@refs/heads/main" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
+
+  deploy:
+    needs: [build-sign-attest, verify]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy (placeholder)
+        run: echo "Would deploy ${{ needs.build-sign-attest.outputs.image-repo }}@${{ needs.build-sign-attest.outputs.digest }}"
