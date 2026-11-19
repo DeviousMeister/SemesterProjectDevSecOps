@@ -1,1 +1,6 @@
 venv/
+.terraform/
+*.tfstate
+*.tfstate.*
+tfplan.binary
+tfplan.json

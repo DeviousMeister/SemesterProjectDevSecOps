@@ -7,4 +7,5 @@
 | curl piped to shell installs Trivy from main | sca.yml:15-16 | True Positive | Download the script, verify its SHA-256, then run it, pinned to a Trivy release tag |
 | Dependabot has no cooldown | dependabot.yml:3-6 | True Positive | Added cooldown: default-days: 7 |
 | Flask bound to 0.0.0.0 | app.py:10 | True Positive | Host now read from HOST env var, defaults to 127.0.0.1; 0.0.0.0 set only in the Dockerfile, where a container needs it |
-| SQL built from string (custom rule plus default rules, 5
+| SQL built from string (custom rule plus default rules, 5 results) | rule_test.py:2-3 | True Positive (intentional) | Test code written to prove the custom rule fires; deleted afterward |
+|

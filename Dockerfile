@@ -1,15 +1,31 @@
-FROM python:3.12-slim AS build
+# FROM python:3.12-slim AS build
+# WORKDIR /app
+# COPY requirements.txt .
+# RUN pip install --no-cache-dir --target=/app/deps -r requirements.txt
+# COPY . .
+
+# FROM gcr.io/distroless/python3-debian12 AS runtime
+# WORKDIR /app
+# COPY --from=build /app/deps /app/deps
+# COPY --from=build /app .
+# ENV PYTHONPATH=/app/deps
+# USER nonroot
+# EXPOSE 3000
+# ENV HOST=0.0.0.0
+# CMD ["app.py"]
+
+
+FROM python:3.11-slim AS build
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir --target=/app/deps -r requirements.txt
-COPY . .
-
+COPY app.py .
 FROM gcr.io/distroless/python3-debian12 AS runtime
 WORKDIR /app
 COPY --from=build /app/deps /app/deps
-COPY --from=build /app .
+COPY --from=build /app/app.py .
 ENV PYTHONPATH=/app/deps
+ENV HOST=0.0.0.0
 USER nonroot
 EXPOSE 3000
-ENV HOST=0.0.0.0
 CMD ["app.py"]
